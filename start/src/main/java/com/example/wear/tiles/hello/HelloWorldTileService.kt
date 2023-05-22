@@ -22,6 +22,7 @@ import androidx.wear.tiles.RequestBuilders
 import androidx.wear.tiles.ResourceBuilders
 import androidx.wear.tiles.TileBuilders
 import androidx.wear.tiles.TimelineBuilders
+import com.example.wear.tiles.R
 import com.google.android.horologist.tiles.CoroutinesTileService
 
 private const val RESOURCES_VERSION = "0"
@@ -64,8 +65,11 @@ class HelloWorldTileService : CoroutinesTileService() {
             .setWidth(DimensionBuilders.expand())
             .setHeight(DimensionBuilders.expand())
             .addContent(
-                LayoutElementBuilders.Text.Builder().setText(text).build()
-            ).build()
+                LayoutElementBuilders.Text.Builder()
+                    .setText(text)
+                    .build()
+            )
+            .build()
 
     }
 }
