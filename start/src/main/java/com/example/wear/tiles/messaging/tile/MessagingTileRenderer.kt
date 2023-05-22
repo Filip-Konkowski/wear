@@ -31,6 +31,7 @@ import androidx.wear.tiles.material.Button
 import androidx.wear.tiles.material.ButtonColors
 import androidx.wear.tiles.material.Text
 import androidx.wear.tiles.material.Typography
+import androidx.wear.tiles.material.layouts.MultiButtonLayout
 import androidx.wear.tiles.material.layouts.PrimaryLayout
 import com.example.wear.tiles.R
 import com.example.wear.tiles.messaging.Contact
@@ -82,18 +83,18 @@ class MessagingTileRenderer(context: Context) :
 /**
  * Layout definition for the Messaging Tile.
  */
-private fun messagingTileLayout(
-    context: Context,
-    deviceParameters: DeviceParametersBuilders.DeviceParameters,
-    state: MessagingTileState
-) = PrimaryLayout.Builder(deviceParameters)
-    .setContent(
-        Text.Builder(context, context.getString(R.string.hello_tile_body))
-            .setTypography(Typography.TYPOGRAPHY_BODY1)
-            .setColor(ColorBuilders.argb(Color.White.toArgb()))
-            .build()
-    )
-    .build()
+//private fun messagingTileLayout(
+//    context: Context,
+//    deviceParameters: DeviceParametersBuilders.DeviceParameters,
+//    state: MessagingTileState
+//) = PrimaryLayout.Builder(deviceParameters)
+//    .setContent(
+//        Text.Builder(context, context.getString(R.string.hello_tile_body))
+//            .setTypography(Typography.TYPOGRAPHY_BODY1)
+//            .setColor(ColorBuilders.argb(Color.White.toArgb()))
+//            .build()
+//    )
+//    .build()
 
 @WearDevicePreview
 @Composable
@@ -130,7 +131,7 @@ private fun SearchButtonPreview() {
     }
 }
 
-private fun contentLayout(
+private fun contactLayout(
     context: Context,
     contact: Contact,
     clickable: ModifiersBuilders.Clickable,
@@ -146,3 +147,27 @@ private fun contentLayout(
     }
     .build()
 
+private fun messagingTileLayout(
+    context: Context,
+    deviceParameters: DeviceParametersBuilders.DeviceParameters,
+    state: MessagingTileState
+) = PrimaryLayout.Builder(deviceParameters)
+    .setContent(
+        MultiButtonLayout.Builder()
+            .apply {
+                // In a PrimaryLayout with a compact chip at the bottom, we can fit 5 buttons.
+                // We're only taking the first 4 contacts so that we can fit a Search button too.
+                state.contacts.take(4).forEach { contact ->
+                    addButtonContent(
+                        contactLayout(
+                            context = context,
+                            contact = contact,
+                            clickable = emptyClickable
+                        )
+                    )
+                }
+            }
+            .addButtonContent(searchLayout(context, emptyClickable))
+            .build()
+    )
+    .build()
