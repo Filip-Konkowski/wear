@@ -29,6 +29,8 @@ import androidx.wear.tiles.ModifiersBuilders.Clickable
 import androidx.wear.tiles.ResourceBuilders
 import androidx.wear.tiles.material.Button
 import androidx.wear.tiles.material.ButtonColors
+import androidx.wear.tiles.material.ChipColors
+import androidx.wear.tiles.material.CompactChip
 import androidx.wear.tiles.material.Text
 import androidx.wear.tiles.material.Typography
 import androidx.wear.tiles.material.layouts.MultiButtonLayout
@@ -168,6 +170,16 @@ private fun messagingTileLayout(
                 }
             }
             .addButtonContent(searchLayout(context, emptyClickable))
+            .build()
+    )
+    .setPrimaryChipContent(
+        CompactChip.Builder(
+            /* context = */ context,
+            /* text = */ context.getString(R.string.tile_messaging_create_new),
+            /* clickable = */ emptyClickable,
+            /* deviceParameters = */ deviceParameters
+        )
+            .setChipColors(ChipColors.primaryChipColors(MessagingTileTheme.colors))
             .build()
     )
     .build()
