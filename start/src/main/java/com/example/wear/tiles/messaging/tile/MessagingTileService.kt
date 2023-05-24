@@ -92,4 +92,5 @@ class MessagingTileService : CoroutinesTileService() {
         // then pass the bitmaps to the renderer to transform them to ImageResources
         return renderer.produceRequestedResources(avatars, requestParams)
     }
+
 }

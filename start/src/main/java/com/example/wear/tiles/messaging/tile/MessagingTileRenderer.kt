@@ -17,22 +17,17 @@ package com.example.wear.tiles.messaging.tile
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.wear.tiles.ColorBuilders
 import androidx.wear.tiles.DeviceParametersBuilders
 import androidx.wear.tiles.LayoutElementBuilders
 import androidx.wear.tiles.ModifiersBuilders
-import androidx.wear.tiles.ModifiersBuilders.Clickable
 import androidx.wear.tiles.ResourceBuilders
 import androidx.wear.tiles.material.Button
 import androidx.wear.tiles.material.ButtonColors
 import androidx.wear.tiles.material.ChipColors
 import androidx.wear.tiles.material.CompactChip
-import androidx.wear.tiles.material.Text
-import androidx.wear.tiles.material.Typography
 import androidx.wear.tiles.material.layouts.MultiButtonLayout
 import androidx.wear.tiles.material.layouts.PrimaryLayout
 import com.example.wear.tiles.R
@@ -57,7 +52,8 @@ class MessagingTileRenderer(context: Context) :
         return messagingTileLayout(
             context = context,
             deviceParameters = deviceParameters,
-            state = state
+            state = state,
+            searchButtonClicable = launchActivityClickable("search_button", openSearch())
         )
     }
 
@@ -66,7 +62,10 @@ class MessagingTileRenderer(context: Context) :
         deviceParameters: DeviceParametersBuilders.DeviceParameters,
         resourceIds: MutableList<String>
     ) {
-        addIdToImageMapping(ID_IC_SEARCH, drawableResToImageResource(R.drawable.ic_search_24))
+        addIdToImageMapping(
+            ID_IC_SEARCH,
+            drawableResToImageResource(R.drawable.ic_search_24)
+        )
 
         resourceState.forEach { (contact, bitmap) ->
             addIdToImageMapping(
@@ -85,26 +84,18 @@ class MessagingTileRenderer(context: Context) :
 /**
  * Layout definition for the Messaging Tile.
  */
-//private fun messagingTileLayout(
-//    context: Context,
-//    deviceParameters: DeviceParametersBuilders.DeviceParameters,
-//    state: MessagingTileState
-//) = PrimaryLayout.Builder(deviceParameters)
-//    .setContent(
-//        Text.Builder(context, context.getString(R.string.hello_tile_body))
-//            .setTypography(Typography.TYPOGRAPHY_BODY1)
-//            .setColor(ColorBuilders.argb(Color.White.toArgb()))
-//            .build()
-//    )
-//    .build()
-
 @WearDevicePreview
 @Composable
 fun MessagingTileRendererPreview() {
+    val state = MessagingTileState(MessagingRepo.knownContacts)
+    val context = LocalContext.current
     TileLayoutPreview(
-        state = MessagingTileState(MessagingRepo.knownContacts),
-        resourceState = emptyMap(),
-        renderer = MessagingTileRenderer(LocalContext.current)
+        state = state,
+        resourceState = mapOf(
+            state.contacts[1] to (context.getDrawable(R.drawable.ali) as BitmapDrawable).bitmap,
+            state.contacts[2] to (context.getDrawable(R.drawable.taylor) as BitmapDrawable).bitmap,
+        ),
+        renderer = MessagingTileRenderer(context)
     )
 }
 
@@ -152,8 +143,10 @@ private fun contactLayout(
 private fun messagingTileLayout(
     context: Context,
     deviceParameters: DeviceParametersBuilders.DeviceParameters,
-    state: MessagingTileState
+    state: MessagingTileState,
+    searchButtonClicable: ModifiersBuilders.Clickable
 ) = PrimaryLayout.Builder(deviceParameters)
+
     .setContent(
         MultiButtonLayout.Builder()
             .apply {
@@ -169,6 +162,7 @@ private fun messagingTileLayout(
                     )
                 }
             }
+            .addButtonContent(searchLayout(context, searchButtonClicable))
             .addButtonContent(searchLayout(context, emptyClickable))
             .build()
     )
@@ -182,4 +176,5 @@ private fun messagingTileLayout(
             .setChipColors(ChipColors.primaryChipColors(MessagingTileTheme.colors))
             .build()
     )
+
     .build()
